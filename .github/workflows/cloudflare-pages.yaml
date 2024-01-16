@@ -11,19 +11,22 @@ jobs:
     name: Publish to Cloudflare Pages
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Publish to Cloudflare Pages
-        id: cloudflare_pages_deploy
-        uses: cloudflare/pages-action@1
+        uses: actions/checkout@v4
+      - name: Use Node.js 18.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+      - name: Install dependencies
+        run: npm install
+      - name: Build
+        run: npm run pages:build
+      - name: Deploy to Cloudflare Pages
+        id: deploy
+        uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: todo-list-demo
-          directory: .vercel/output/static
-          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
-          wranglerVersion: '3'
-
+          accountID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy .vercel/output/static --project-name=todo-list-demo
       - name: Add publish URL as commit status
         uses: actions/github-script@v6
         with:
@@ -36,5 +39,5 @@ jobs:
               description: 'Cloudflare Pages deployment',
               state: 'success',
               sha,
-              target_url: "${{ steps.cloudflare_pages_deploy.outputs.url }}",
+              target_url: "${{ steps.deploy.outputs.deployment-url }}",
             });
