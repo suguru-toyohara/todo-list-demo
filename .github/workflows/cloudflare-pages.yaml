@@ -22,6 +22,7 @@ jobs:
           projectName: todo-list-demo
           directory: .vercel/output/static
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          wranglerVersion: '3'
 
       - name: Add publish URL as commit status
         uses: actions/github-script@v6
