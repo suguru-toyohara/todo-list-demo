@@ -1,5 +1,5 @@
 on:
-  pull_request:
+  push:
     branches:
       - main
 
@@ -32,7 +32,7 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy .vercel/output/static --project-name=todo-list-demo
+          command: pages deploy .vercel/output/static --branch=main --project-name=todo-list-demo
       - name: Add publish URL as commit status
         uses: actions/github-script@v6
         with:
